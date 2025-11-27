@@ -128,7 +128,8 @@ export const ChatUI = () => {
                 </div>
                 <div className={styles.missionList}>
                     {missionItems.map((item, idx) => {
-                        const isMissing = lastEvaluation?.missingElements?.some(m => m.includes(item.split('(')[0])) ?? false;
+                        const itemKey = item.split('(')[0] || item;
+                        const isMissing = lastEvaluation?.missingElements?.some(m => m.includes(itemKey)) ?? false;
                         const isDone = lastEvaluation && !isMissing;
 
                         return (
