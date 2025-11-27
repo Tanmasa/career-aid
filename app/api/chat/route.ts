@@ -72,7 +72,7 @@ User: ${message}
     // 5. If goal is met, inject specific instruction to summarize and move on
     if (evaluation.isGoalMet) {
       const nextMode = NEXT_DOMAIN[mode];
-      const nextModeName = DOMAIN_NAMES[nextMode] || '次のステップ';
+      const nextModeName = nextMode ? DOMAIN_NAMES[nextMode] || '次のステップ' : '次のステップ';
 
       prompt += `
 \n\n【システム通知: ゴール達成】
