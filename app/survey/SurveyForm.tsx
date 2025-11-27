@@ -1,6 +1,8 @@
 'use client';
 
 import { useFormState, useFormStatus } from 'react-dom';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 import type { SurveyFormState } from './actions';
 import { submitSurvey } from './actions';
@@ -9,6 +11,13 @@ const initialState: SurveyFormState = {};
 
 export const SurveyForm = () => {
   const [state, formAction] = useFormState(submitSurvey, initialState);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (state.success) {
+      router.push('/chat');
+    }
+  }, [state.success, router]);
 
   return (
     <form action={formAction} className="survey-form">
@@ -18,7 +27,7 @@ export const SurveyForm = () => {
           <option value="" disabled>
             選択してください
           </option>
-          {Array.from({ length: 6 }).map((_, index) => {
+          {Array.from({ length: 3 }).map((_, index) => {
             const grade = index + 1;
             return (
               <option key={grade} value={grade}>
@@ -47,6 +56,17 @@ export const SurveyForm = () => {
       <label className="field">
         <span>不安に感じていること</span>
         <textarea name="concerns" rows={3} placeholder="例: 将来の進路が決まらない"></textarea>
+      </label>
+
+      <label className="field">
+        <span>将来について考えたことがありますか？</span>
+        <select name="futurePlanning" defaultValue="" required>
+          <option value="" disabled>選択してください</option>
+          <option value="acting">実際に考えていてもう対策している</option>
+          <option value="collecting">考えてはいるが、少しづつ情報を集めている</option>
+          <option value="uncertain">ぼんやり考えているが、何をすれば分からない</option>
+          <option value="not_thinking">全く考えていない</option>
+        </select>
       </label>
 
       <label className="field">

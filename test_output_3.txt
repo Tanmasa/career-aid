@@ -1,0 +1,19 @@
+npm warn config optional Use `--omit=optional` to exclude optional dependencies, or
+npm warn config `--include=optional` to include them.
+npm warn config
+npm warn config       Default value does install optional deps unless otherwise omitted.
+PASS tests/goalEvaluator.test.ts
+  Goal Evaluator
+    竏・Self-Awareness: Success (9 ms)
+    竏・Self-Awareness: Failure (No Action) (2 ms)
+    竏・Info: Success (1 ms)
+    竏・Info: Failure (No Method) (1 ms)
+    竏・Goal: Success (1 ms)
+    竏・Plan: Success (1 ms)
+    竏・Problem: Success (2 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       7 passed, 7 total
+Snapshots:   0 total
+Time:        1.285 s
+Ran all test suites matching tests/goalEvaluator.test.ts.

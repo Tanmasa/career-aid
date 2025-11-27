@@ -1,0 +1,55 @@
+npm warn config optional Use `--omit=optional` to exclude optional dependencies, or
+npm warn config `--include=optional` to include them.
+npm warn config
+npm warn config       Default value does install optional deps unless otherwise omitted.
+  console.log
+    Evaluating Info: 蟄ｦ雋ｻ縺ｨ蛛丞ｷｮ蛟､縺ｨ蝣ｴ謇縺ｫ縺､縺・※縲∝､ｧ蟄ｦ縺ｮHP縺ｧ隱ｿ縺ｹ縺溘＞
+
+      at evaluateInfo (lib/goalEvaluator.ts:47:13)
+
+  console.log
+    Has Method: false Has Question: true
+
+      at evaluateInfo (lib/goalEvaluator.ts:54:13)
+
+  console.log
+    Evaluating Info: 蟄ｦ雋ｻ縺檎衍繧翫◆縺・
+      at evaluateInfo (lib/goalEvaluator.ts:47:13)
+
+  console.log
+    Has Method: false Has Question: true
+
+      at evaluateInfo (lib/goalEvaluator.ts:54:13)
+
+FAIL tests/goalEvaluator.test.ts
+  Goal Evaluator
+    竏・Self-Awareness: Success (8 ms)
+    竏・Self-Awareness: Failure (No Action) (2 ms)
+    ﾃ・Info: Success (43 ms)
+    竏・Info: Failure (No Method) (3 ms)
+    竏・Goal: Success (1 ms)
+    竏・Plan: Success (2 ms)
+    竏・Problem: Success (1 ms)
+
+  笳・Goal Evaluator 窶ｺ Info: Success
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+      15 |     test('Info: Success', () => {
+      16 |         const result = evaluateGoal('info', '蟄ｦ雋ｻ縺ｨ蛛丞ｷｮ蛟､縺ｨ蝣ｴ謇縺ｫ縺､縺・※縲∝､ｧ蟄ｦ縺ｮHP縺ｧ隱ｿ縺ｹ縺溘＞');
+    > 17 |         expect(result.isGoalMet).toBe(true);
+         |                                  ^
+      18 |     });
+      19 |
+      20 |     test('Info: Failure (No Method)', () => {
+
+      at Object.<anonymous> (tests/goalEvaluator.test.ts:17:34)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 6 passed, 7 total
+Snapshots:   0 total
+Time:        1.14 s
+Ran all test suites matching tests/goalEvaluator.test.ts.

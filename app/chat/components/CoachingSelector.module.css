@@ -1,0 +1,84 @@
+.container {
+    display: flex;
+    flex-wrap: nowrap;
+    padding: 0.75rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE and Edge */
+}
+
+.container::-webkit-scrollbar {
+    display: none;
+    /* Chrome, Safari, Opera */
+}
+
+.cardButton {
+    flex-shrink: 0;
+    margin: 0 0.375rem;
+    padding: 0.75rem 1rem;
+    border-radius: 1rem;
+    text-align: left;
+    transition: all 300ms ease-out;
+    border: 1px solid #e2e8f0;
+    /* slate-200 */
+    background-color: white;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+}
+
+.cardButton:hover {
+    background-color: #f8fafc;
+    /* slate-50 */
+    border-color: #93c5fd;
+    /* blue-300 */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.cardButtonActive {
+    background: linear-gradient(to bottom right, #2563eb, #4338ca);
+    /* blue-600 to indigo-700 */
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);
+    transform: scale(1.05);
+}
+
+.iconWrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    margin-bottom: 0.125rem;
+}
+
+.icon {
+    font-size: 1.125rem;
+    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.1));
+}
+
+.label {
+    font-weight: 700;
+    letter-spacing: 0.025em;
+    font-size: 0.875rem;
+    color: #334155;
+    /* slate-700 */
+}
+
+.labelActive {
+    color: white;
+}
+
+.description {
+    font-size: 0.625rem;
+    font-weight: 500;
+    padding-left: 0.125rem;
+    color: #94a3b8;
+    /* slate-400 */
+}
+
+.descriptionActive {
+    color: #dbeafe;
+    /* blue-100 */
+}
