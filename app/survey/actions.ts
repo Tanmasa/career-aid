@@ -1,5 +1,6 @@
 'use server';
 
+import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 import { summarizeSurvey } from '@/lib/prompt';
@@ -38,6 +39,11 @@ export const submitSurvey = async (
   const futurePlanningKey = (formData.get('futurePlanning') || '').toString();
   const futurePlanning = futurePlanningKey ? FUTURE_PLANNING_LABELS[futurePlanningKey] ?? null : null;
   const freeText = (formData.get('freeText') || '').toString().trim() || null;
+  const userName = (formData.get('userName') || '').toString().trim();
+
+  if (userName) {
+    cookies().set('user_name', userName, { path: '/', maxAge: 60 * 60 * 24 * 30 });
+  }
 
   const supabase = createServerSupabaseClient();
   const sessionId = getOrCreateSessionId();
@@ -75,7 +81,8 @@ export const submitSurvey = async (
       favorite_subjects: favoriteSubjects,
       concerns,
       future_planning: futurePlanning,
-      free_text: freeText
+      free_text: freeText,
+      user_name: userName
     });
 
     if (surveyError) {

@@ -27,7 +27,7 @@ const DOMAIN_NAMES: Record<string, string> = {
 
 export async function POST(req: Request) {
   try {
-    const { message, mode, messages, turnCount } = await req.json();
+    const { message, mode, messages, turnCount, userName } = await req.json();
 
     if (!message?.trim()) {
       return NextResponse.json({ error: 'メッセージが空です。' }, { status: 400 });
@@ -44,10 +44,15 @@ export async function POST(req: Request) {
       : message;
 
     // 3️⃣ ゴール評価
-    const evaluation = evaluateGoal(mode, userHistoryText);
+    const evaluation = evaluateGoal(mode as CoachingDomain, userHistoryText);
 
     // 4️⃣ プロンプト組み立て
     let systemInstruction = COACHING_PROMPTS[mode as CoachingDomain];
+
+    // ユーザー名がある場合、プロンプトに追加
+    if (userName) {
+      systemInstruction = `ユーザーの名前は「${userName}」です。親しみを込めて、適宜名前で呼んでください。\n` + systemInstruction;
+    }
 
     // ストラグルロジック（5回以上かつ未達成）
     if (!evaluation.isGoalMet && turnCount >= 5) {

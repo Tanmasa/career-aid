@@ -5,6 +5,7 @@ import { CoachingDomain } from '@/lib/coachingPrompt';
 import { CoachingSelector } from './CoachingSelector';
 import styles from './ChatUI.module.css';
 
+// Types for messages and evaluation
 type Message = {
     role: 'user' | 'assistant';
     content: string;
@@ -15,16 +16,57 @@ type Evaluation = {
     missingElements: string[];
 };
 
-export const ChatUI = () => {
+// Welcome messages for each coaching mode
+const getWelcomeMessage = (m: CoachingDomain) => {
+    switch (m) {
+        case 'self-awareness':
+            return `【自己認識】のテーマですね！\nまずはリラックスして考えてみましょう。\n最近、学校生活や趣味の中で「これは楽しかったな」とか「自分、結構やるじゃん」と思えた瞬間はありましたか？些細なことでも大丈夫ですよ。`;
+        case 'info':
+            return `【情報収集】のテーマですね！\n世の中には色々な仕事や学校がありますよね。\n今、ふと気になっている「キーワード」や「分野」はありますか？「なんとなく」でも構いません。`;
+        case 'goal':
+            return `【目標選択】のテーマですね！\n少し先の未来を想像してみましょう。\n高校を卒業する時、あるいは次の学年に上がる時、「どうなっていたい」ですか？`;
+        case 'plan':
+            return `【計画作成】のテーマですね！\n千里の道も一歩からです。\n目標に近づくために、「今週」できそうな小さなアクションを一緒に考えてみませんか？`;
+        case 'problem':
+            return `【問題解決】のテーマですね！\n不安や悩みは、言葉にすると軽くなることがあります。\n今、進路について「ちょっと気が重いな」と感じていることや、壁に感じていることはありますか？`;
+        default:
+            return 'テーマを選んでください。';
+    }
+};
+
+// Mission requirements for each mode (used for progress UI)
+const getMissionRequirements = (m: CoachingDomain) => {
+    switch (m) {
+        case 'self-awareness':
+            return ['強みを見つける', '具体的なエピソード'];
+        case 'info':
+            return ['知りたいこと(3つ)', '調べ方'];
+        case 'goal':
+            return ['期限', '具体的な目標'];
+        case 'plan':
+            return ['今週やること', '日時'];
+        case 'problem':
+            return ['不安・障害', '対策(2つ)'];
+        default:
+            return [];
+    }
+};
+
+export const ChatUI = ({ initialUserName = '' }: { initialUserName?: string }) => {
+    // ----- 名前入力ステップ (Propsから受け取るため削除) -----
+    const [userName] = useState(initialUserName);
+
+    // ----- コーチングステート -----
     const [mode, setMode] = useState<CoachingDomain>('self-awareness');
     const [messages, setMessages] = useState<Message[]>([
-        { role: 'assistant', content: 'こんにちは！進路について一緒に考えましょう。まずは取り組みたいテーマを選んでください。' }
+        { role: 'assistant', content: 'こんにちは！進路について一緒に考えましょう。まずは取り組みたいテーマを選んでください。' },
     ]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [lastEvaluation, setLastEvaluation] = useState<Evaluation | null>(null);
     const [turnCount, setTurnCount] = useState(0);
 
+    // ----- メッセージ送信 -----
     const sendMessage = async () => {
         if (!input.trim() || isLoading) return;
 
@@ -33,71 +75,35 @@ export const ChatUI = () => {
         setInput('');
         setIsLoading(true);
 
-        // Increment turn count
-        const currentTurnCount = turnCount + 1;
-        setTurnCount(currentTurnCount);
+        const currentTurn = turnCount + 1;
+        setTurnCount(currentTurn);
 
         try {
             const res = await fetch('/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: userMessage, mode, messages, turnCount: currentTurnCount }), // Send turnCount
+                body: JSON.stringify({
+                    message: userMessage,
+                    mode,
+                    messages,
+                    turnCount: currentTurn,
+                    userName, // Propから設定された値を使用
+                }),
             });
 
             if (!res.ok) {
-                const errorData = await res.json();
-                throw new Error(errorData.error || 'API Error');
+                const err = await res.json();
+                throw new Error(err.error || 'API Error');
             }
 
             const data = await res.json();
             setMessages(prev => [...prev, { role: 'assistant', content: data.reply }]);
             setLastEvaluation(data.evaluation);
-
-        } catch (error: any) {
-            console.error(error);
-            setMessages(prev => [...prev, { role: 'assistant', content: `エラー: ${error.message}` }]);
+        } catch (e: any) {
+            console.error(e);
+            setMessages(prev => [...prev, { role: 'assistant', content: `エラー: ${e.message}` }]);
         } finally {
             setIsLoading(false);
-        }
-    };
-
-    // Define welcome messages for each mode - Coaching Style
-    const getWelcomeMessage = (m: CoachingDomain) => {
-        switch (m) {
-            case 'self-awareness':
-                return `【自己認識】のテーマですね！
-まずはリラックスして考えてみましょう。
-最近、学校生活や趣味の中で「これは楽しかったな」とか「自分、結構やるじゃん」と思えた瞬間はありましたか？些細なことでも大丈夫ですよ。`;
-            case 'info':
-                return `【情報収集】のテーマですね！
-世の中には色々な仕事や学校がありますよね。
-今、ふと気になっている「キーワード」や「分野」はありますか？「なんとなく」でも構いません。`;
-            case 'goal':
-                return `【目標選択】のテーマですね！
-少し先の未来を想像してみましょう。
-高校を卒業する時、あるいは次の学年に上がる時、「どうなっていたい」ですか？`;
-            case 'plan':
-                return `【計画作成】のテーマですね！
-千里の道も一歩からです。
-目標に近づくために、「今週」できそうな小さなアクションを一緒に考えてみませんか？`;
-            case 'problem':
-                return `【問題解決】のテーマですね！
-不安や悩みは、言葉にすると軽くなることがあります。
-今、進路について「ちょっと気が重いな」と感じていることや、壁に感じていることはありますか？`;
-            default:
-                return 'テーマを選んでください。';
-        }
-    };
-
-    // Define mission requirements for each mode
-    const getMissionRequirements = (m: CoachingDomain) => {
-        switch (m) {
-            case 'self-awareness': return ['強みを見つける', '具体的なエピソード'];
-            case 'info': return ['知りたいこと(3つ)', '調べ方'];
-            case 'goal': return ['期限', '具体的な目標'];
-            case 'plan': return ['今週やること', '日時'];
-            case 'problem': return ['不安・障害', '対策(2つ)'];
-            default: return [];
         }
     };
 
@@ -106,18 +112,22 @@ export const ChatUI = () => {
     return (
         <div className={styles.container}>
             {/* Header */}
-            <div className={styles.header}>
+            <header className={styles.header}>
                 <h1 className={styles.headerTitle}>✨ AIキャリアコーチ</h1>
-            </div>
+                <p>ようこそ、{userName}さん！</p>
+            </header>
 
             {/* Mode Selector */}
             <div className={styles.modeSelectorContainer}>
-                <CoachingSelector currentMode={mode} onSelectMode={(m) => {
-                    setMode(m);
-                    setMessages(prev => [...prev, { role: 'assistant', content: getWelcomeMessage(m) }]);
-                    setLastEvaluation(null);
-                    setTurnCount(0); // Reset turn count
-                }} />
+                <CoachingSelector
+                    currentMode={mode}
+                    onSelectMode={m => {
+                        setMode(m);
+                        setMessages(prev => [...prev, { role: 'assistant', content: getWelcomeMessage(m) }]);
+                        setLastEvaluation(null);
+                        setTurnCount(0);
+                    }}
+                />
             </div>
 
             {/* Mission Progress Card */}
@@ -131,9 +141,11 @@ export const ChatUI = () => {
                         const itemKey = item.split('(')[0] || item;
                         const isMissing = lastEvaluation?.missingElements?.some(m => m.includes(itemKey)) ?? false;
                         const isDone = lastEvaluation && !isMissing;
-
                         return (
-                            <div key={idx} className={`${styles.missionItem} ${isDone ? styles.missionItemDone : styles.missionItemPending}`}>
+                            <div
+                                key={idx}
+                                className={`${styles.missionItem} ${isDone ? styles.missionItemDone : styles.missionItemPending}`}
+                            >
                                 <span className="text-[10px]">{isDone ? '✨' : '○'}</span>
                                 <span className="font-bold text-[10px]">{item}</span>
                             </div>
@@ -145,22 +157,22 @@ export const ChatUI = () => {
             {/* Chat Area */}
             <div className={styles.chatArea}>
                 {messages.map((msg, idx) => (
-                    <div key={idx} className={`${styles.messageRow} ${msg.role === 'user' ? styles.messageRowUser : styles.messageRowAssistant}`}>
-                        <div className={`${styles.messageBubble} ${msg.role === 'user' ? styles.messageBubbleUser : styles.messageBubbleAssistant}`}>
+                    <div
+                        key={idx}
+                        className={`${styles.messageRow} ${msg.role === 'user' ? styles.messageRowUser : styles.messageRowAssistant}`}
+                    >
+                        <div
+                            className={`${styles.messageBubble} ${msg.role === 'user' ? styles.messageBubbleUser : styles.messageBubbleAssistant}`}
+                        >
                             {msg.content}
                         </div>
                     </div>
                 ))}
-
                 {isLoading && (
                     <div className="flex justify-start w-full">
-                        <div className={styles.loadingBubble}>
-                            入力中...
-                        </div>
+                        <div className={styles.loadingBubble}>入力中...</div>
                     </div>
                 )}
-
-                {/* Feedback Area */}
                 {lastEvaluation?.isGoalMet && (
                     <div className={styles.feedbackContainer}>
                         <div className={styles.feedbackBadge}>
@@ -177,17 +189,13 @@ export const ChatUI = () => {
                     <input
                         type="text"
                         value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
+                        onChange={e => setInput(e.target.value)}
+                        onKeyDown={e => e.key === 'Enter' && sendMessage()}
                         className={styles.inputField}
                         placeholder="メッセージを入力..."
                         disabled={isLoading}
                     />
-                    <button
-                        onClick={sendMessage}
-                        disabled={isLoading}
-                        className={styles.sendButton}
-                    >
+                    <button onClick={sendMessage} disabled={isLoading} className={styles.sendButton}>
                         送信
                     </button>
                 </div>

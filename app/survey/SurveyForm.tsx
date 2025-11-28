@@ -22,6 +22,10 @@ export const SurveyForm = () => {
   return (
     <form action={formAction} className="survey-form">
       <label className="field">
+        <span>お名前</span>
+        <input name="userName" placeholder="例: 山田 太郎" required />
+      </label>
+      <label className="field">
         <span>学年</span>
         <select name="grade" defaultValue="" required>
           <option value="" disabled>
