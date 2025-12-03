@@ -9,10 +9,10 @@ import { getOrCreateSessionId } from '@/lib/session';
 import { createServerSupabaseClient } from '@/lib/supabase';
 
 const FUTURE_PLANNING_LABELS: Record<string, string> = {
-  acting: '実際に考えていてもう対策している',
-  collecting: '考えてはいるが、少しづつ情報を集めている',
-  uncertain: 'ぼんやり考えているが、何をすれば分からない',
-  not_thinking: '全く考えていない'
+  decided: '具体的に決まっている(志望校や企業名まで)',
+  direction_set: '方向性は決まっている（文系・理系、分野など）',
+  considering: 'いくつかの選択肢で迷っている（考え中）',
+  not_decided: 'まだ何も考えていない・分からない'
 };
 
 export type SurveyFormState = {
