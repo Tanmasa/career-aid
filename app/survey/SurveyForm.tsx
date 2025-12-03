@@ -63,13 +63,13 @@ export const SurveyForm = () => {
       </label>
 
       <label className="field">
-        <span>将来について考えたことがありますか？</span>
+        <span>現在の進路(卒業後の予定)の決定状況について、最も近いものを選んでください。</span>
         <select name="futurePlanning" defaultValue="" required>
           <option value="" disabled>選択してください</option>
-          <option value="acting">実際に考えていてもう対策している</option>
-          <option value="collecting">考えてはいるが、少しづつ情報を集めている</option>
-          <option value="uncertain">ぼんやり考えているが、何をすれば分からない</option>
-          <option value="not_thinking">全く考えていない</option>
+          <option value="decided">具体的に決まっている(志望校や企業名まで)</option>
+          <option value="direction_set">方向性は決まっている（文系・理系、分野など）</option>
+          <option value="considering">いくつかの選択肢で迷っている（考え中）</option>
+          <option value="not_decided">まだ何も考えていない・分からない</option>
         </select>
       </label>
 
